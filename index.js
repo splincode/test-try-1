@@ -14,7 +14,17 @@ app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
     extended: true
 }));
 
+
+
+
+
 app.post('/template', async (req, res) => {
+
+    console.log(
+        await run(
+            'ls -la'
+        )
+    );
 
    try {
        const body = req.body;
@@ -74,13 +84,25 @@ app.post('/template', async (req, res) => {
        console.log('body is ',req.body);
 
        res.send({
-           result: result
+           result: result,
+           ls: await run(
+               'ls -la'
+           ),
+           lsNode: await run(
+               'ls -la node_modules/@taiga-ui/cdk'
+           )
        });
 
        resetActiveProject();
    } catch (error) {
        res.send({
-           error: error.message
+           error: error.message,
+           ls: await run(
+               'ls -la'
+           ),
+           lsNode: await run(
+           'ls -la node_modules/@taiga-ui/cdk'
+            )
        });
    }
 });
@@ -90,3 +112,16 @@ app.listen(PORT, () => {
 });
 
 module.exports = app;
+
+
+const { exec } = require('child_process')
+
+function run(cmd) {
+    return new Promise((resolve, reject) => {
+        exec(cmd, (error, stdout, stderr) => {
+            if (error) return reject(error)
+            if (stderr) return reject(stderr)
+            resolve(stdout)
+        })
+    })
+}
