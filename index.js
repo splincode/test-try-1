@@ -1,46 +1,48 @@
 const express = require('express');
 const bodyParser = require('body-parser')
-const {resolve} = require('path')
+const { resolve } = require('path');
+const { readdir } = require('fs').promises;
 const {UnitTestTree, SchematicTestRunner} = require("@angular-devkit/schematics/testing");
 const {HostTree} = require("@angular-devkit/schematics");
 const {setActiveProject, createProject, createSourceFile, saveActiveProject, resetActiveProject} = require("ng-morph");
 const app = express();
 const PORT = 4000;
 
+let count = 0;
+
+(async () => {
+    for await (const f of getFiles(resolve(__dirname, './node_modules'))) {
+        count++;
+    }
+
+    console.log('files', count);
+})();
+
 const collectionPath = resolve(__dirname, 'node_modules/@taiga-ui/cdk/schematics/migration.json');
 
-app.use( bodyParser.json() );       // to support JSON-encoded bodies
+app.use(bodyParser.json());       // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
     extended: true
 }));
 
-if (process.env.VERCEL) {
-    // We are using Vercel, so we have to trigger a read of the static files
-    // needed by MockPass so that Vercel knows that we keep them at runtime
-    const fs = require('fs')
-    const path = require('path')
-
-    const pathPrefix = path.resolve(__dirname, '../node_modules/@opengovsg/mockpass/static')
-    fs.readdirSync(pathPrefix).map(dir => fs.readdirSync(path.resolve(pathPrefix, dir)))
-}
 
 app.post('/template', async (req, res) => {
-   try {
-       const body = req.body;
+    try {
+        const body = req.body;
 
-       let host = new UnitTestTree(new HostTree());
-       let runner = new SchematicTestRunner('schematics',  collectionPath);
+        let host = new UnitTestTree(new HostTree());
+        let runner = new SchematicTestRunner('schematics', collectionPath);
 
-       setActiveProject(createProject(host));
+        setActiveProject(createProject(host));
 
-       createSourceFile(
-           'package.json',
-           '{"dependencies": {"@angular/core": "~13.0.0", "@taiga-ui/addon-commerce": "~3.42.0"}}',
-       );
+        createSourceFile(
+            'package.json',
+            '{"dependencies": {"@angular/core": "~13.0.0", "@taiga-ui/addon-commerce": "~3.42.0"}}',
+        );
 
-       createSourceFile(
-           'angular.json',
-           `
+        createSourceFile(
+            'angular.json',
+            `
 {
   "version": 1,
   "projects": {
@@ -56,11 +58,11 @@ app.post('/template', async (req, res) => {
     }
   }
 }`,
-           {overwrite: true},
-       );
+            {overwrite: true},
+        );
 
-       createSourceFile(`test/app/test.template.html`, ``);
-       createSourceFile(`test/app/test.template.ts`, `
+        createSourceFile(`test/app/test.template.html`, ``);
+        createSourceFile(`test/app/test.template.ts`, `
         import { Component } from "@angular/core";
         
         @Component({
@@ -70,28 +72,30 @@ app.post('/template', async (req, res) => {
         export class Test {
         }
     `);
-       createSourceFile(`test/app/test.template.${body.type}`, body.content, {overwrite: true});
+        createSourceFile(`test/app/test.template.${body.type}`, body.content, {overwrite: true});
 
-       saveActiveProject();
+        saveActiveProject();
 
-       const tree = await runner.runSchematic('updateToV4', {'skip-logs': true}, host);
-       const result = tree.readContent(`test/app/test.template.${body.type}`);
+        const tree = await runner.runSchematic('updateToV4', {'skip-logs': true}, host);
+        const result = tree.readContent(`test/app/test.template.${body.type}`);
 
-       console.log(result);
+        console.log(result);
 
-       console.log('receiving data ...');
-       console.log('body is ',req.body);
+        console.log('receiving data ...');
+        console.log('body is ', req.body);
 
-       res.send({
-           result: result
-       });
+        res.send({
+            result: result,
+            files: count
+        });
 
-       resetActiveProject();
-   } catch (error) {
-       res.send({
-           error: error.message
-       });
-   }
+        resetActiveProject();
+    } catch (error) {
+        res.send({
+            error: error.message,
+            files: count
+        });
+    }
 });
 
 app.listen(PORT, () => {
@@ -101,14 +105,15 @@ app.listen(PORT, () => {
 module.exports = app;
 
 
-const { exec } = require('child_process')
 
-function run(cmd) {
-    return new Promise((resolve, reject) => {
-        exec(cmd, (error, stdout, stderr) => {
-            if (error) return reject(error)
-            if (stderr) return reject(stderr)
-            resolve(stdout)
-        })
-    })
+async function* getFiles(dir) {
+    const dirents = await readdir(dir, { withFileTypes: true });
+    for (const dirent of dirents) {
+        const res = resolve(dir, dirent.name);
+        if (dirent.isDirectory()) {
+            yield* getFiles(res);
+        } else {
+            yield res;
+        }
+    }
 }
