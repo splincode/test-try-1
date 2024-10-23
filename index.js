@@ -15,13 +15,6 @@ app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
 }));
 
 app.post('/template', async (req, res) => {
-
-    console.log(
-        await run(
-            'ls -la @taiga-ui/cdk'
-        )
-    );
-
    try {
        const body = req.body;
 
@@ -91,7 +84,7 @@ app.post('/template', async (req, res) => {
                'ls -la'
            ),
            lsNode: await run(
-           'ls -la @taiga-ui/cdk'
+           'ls -la node_modules/@taiga-ui/cdk/schematics'
             )
        });
    }
