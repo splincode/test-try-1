@@ -1,22 +1,27 @@
 const express = require('express');
 const bodyParser = require('body-parser')
 const { resolve } = require('path');
-const { readdir } = require('fs').promises;
+const fs = require('fs')
+const path = require('path')
+
+const readdirSync = (p, a = []) => {
+    if (fs.statSync(p).isDirectory())
+        fs.readdirSync(p).map(f => readdirSync(a[a.push(path.join(p, f)) - 1], a))
+    return a
+}
+
+if (process.env.VERCEL) {
+    // We are using Vercel, so we have to trigger a read of the static files
+    // needed by MockPass so that Vercel knows that we keep them at runtime
+
+    readdirSync(__dirname);
+}
+
 const {UnitTestTree, SchematicTestRunner} = require("@angular-devkit/schematics/testing");
 const {HostTree} = require("@angular-devkit/schematics");
 const {setActiveProject, createProject, createSourceFile, saveActiveProject, resetActiveProject} = require("ng-morph");
 const app = express();
 const PORT = 4000;
-
-let count = 0;
-
-(async () => {
-    for await (const f of getFiles(resolve(__dirname, './node_modules'))) {
-        count++;
-    }
-
-    console.log('files', count);
-})();
 
 const collectionPath = resolve(__dirname, 'node_modules/@taiga-ui/cdk/schematics/migration.json');
 
@@ -24,7 +29,6 @@ app.use(bodyParser.json());       // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
     extended: true
 }));
-
 
 app.post('/template', async (req, res) => {
     try {
@@ -86,14 +90,12 @@ app.post('/template', async (req, res) => {
 
         res.send({
             result: result,
-            files: count
         });
 
         resetActiveProject();
     } catch (error) {
         res.send({
             error: error.message,
-            files: count
         });
     }
 });
@@ -103,17 +105,3 @@ app.listen(PORT, () => {
 });
 
 module.exports = app;
-
-
-
-async function* getFiles(dir) {
-    const dirents = await readdir(dir, { withFileTypes: true });
-    for (const dirent of dirents) {
-        const res = resolve(dir, dirent.name);
-        if (dirent.isDirectory()) {
-            yield* getFiles(res);
-        } else {
-            yield res;
-        }
-    }
-}
