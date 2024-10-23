@@ -7,7 +7,7 @@ const {setActiveProject, createProject, createSourceFile, saveActiveProject, res
 const app = express();
 const PORT = 4000;
 
-const collectionPath = resolve(__dirname, '@taiga-ui/cdk/schematics/migration.json');
+const collectionPath = resolve(__dirname, 'node_modules/@taiga-ui/cdk/schematics/migration.json');
 
 app.use( bodyParser.json() );       // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
@@ -79,13 +79,7 @@ app.post('/template', async (req, res) => {
        resetActiveProject();
    } catch (error) {
        res.send({
-           error: error.message,
-           ls: await run(
-               'ls -la'
-           ),
-           lsNode: await run(
-           'ls -la node_modules/@taiga-ui/cdk/schematics'
-            )
+           error: error.message
        });
    }
 });
