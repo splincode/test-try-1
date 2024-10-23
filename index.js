@@ -7,7 +7,7 @@ const {setActiveProject, createProject, createSourceFile, saveActiveProject, res
 const app = express();
 const PORT = 4000;
 
-const collectionPath = resolve(process.cwd(), 'node_modules/@taiga-ui/cdk/schematics/migration.json');
+const collectionPath = resolve(require.resolve('@taiga-ui/cdk/package.json'), '../schematics/migration.json');
 
 app.use( bodyParser.json() );       // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
@@ -16,21 +16,22 @@ app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
 
 app.post('/template', async (req, res) => {
 
-    const body = req.body;
+   try {
+       const body = req.body;
 
-    let host = new UnitTestTree(new HostTree());
-    let runner = new SchematicTestRunner('schematics',  collectionPath);
+       let host = new UnitTestTree(new HostTree());
+       let runner = new SchematicTestRunner('schematics',  collectionPath);
 
-    setActiveProject(createProject(host));
+       setActiveProject(createProject(host));
 
-    createSourceFile(
-        'package.json',
-        '{"dependencies": {"@angular/core": "~13.0.0", "@taiga-ui/addon-commerce": "~3.42.0"}}',
-    );
+       createSourceFile(
+           'package.json',
+           '{"dependencies": {"@angular/core": "~13.0.0", "@taiga-ui/addon-commerce": "~3.42.0"}}',
+       );
 
-    createSourceFile(
-        'angular.json',
-        `
+       createSourceFile(
+           'angular.json',
+           `
 {
   "version": 1,
   "projects": {
@@ -46,11 +47,11 @@ app.post('/template', async (req, res) => {
     }
   }
 }`,
-        {overwrite: true},
-    );
+           {overwrite: true},
+       );
 
-    createSourceFile(`test/app/test.template.html`, ``);
-    createSourceFile(`test/app/test.template.ts`, `
+       createSourceFile(`test/app/test.template.html`, ``);
+       createSourceFile(`test/app/test.template.ts`, `
         import { Component } from "@angular/core";
         
         @Component({
@@ -60,23 +61,28 @@ app.post('/template', async (req, res) => {
         export class Test {
         }
     `);
-    createSourceFile(`test/app/test.template.${body.type}`, body.content, {overwrite: true});
+       createSourceFile(`test/app/test.template.${body.type}`, body.content, {overwrite: true});
 
-    saveActiveProject();
+       saveActiveProject();
 
-    const tree = await runner.runSchematic('updateToV4', {'skip-logs': true}, host);
-    const result = tree.readContent(`test/app/test.template.${body.type}`);
+       const tree = await runner.runSchematic('updateToV4', {'skip-logs': true}, host);
+       const result = tree.readContent(`test/app/test.template.${body.type}`);
 
-    console.log(result);
+       console.log(result);
 
-    console.log('receiving data ...');
-    console.log('body is ',req.body);
+       console.log('receiving data ...');
+       console.log('body is ',req.body);
 
-    res.send({
-        result: result
-    });
+       res.send({
+           result: result
+       });
 
-    resetActiveProject();
+       resetActiveProject();
+   } catch (error) {
+       res.send({
+           error: error.message
+       });
+   }
 });
 
 app.listen(PORT, () => {
