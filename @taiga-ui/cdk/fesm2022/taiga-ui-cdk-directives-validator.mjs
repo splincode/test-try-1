@@ -1,0 +1,44 @@
+import * as i0 from '@angular/core';
+import { Directive, Input } from '@angular/core';
+import { Validators, NG_VALIDATORS } from '@angular/forms';
+import { EMPTY_FUNCTION } from '@taiga-ui/cdk/constants';
+import { tuiProvide } from '@taiga-ui/cdk/utils';
+
+class TuiValidator {
+    constructor() {
+        this.onChange = EMPTY_FUNCTION;
+        this.tuiValidator = Validators.nullValidator;
+    }
+    validate(control) {
+        return this.tuiValidator(control);
+    }
+    registerOnValidatorChange(onChange) {
+        this.onChange = onChange;
+    }
+    ngOnChanges() {
+        this.onChange();
+    }
+    ngOnDestroy() {
+        this.tuiValidator = Validators.nullValidator;
+        this.onChange();
+    }
+    static { this.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "16.2.12", ngImport: i0, type: TuiValidator, deps: [], target: i0.ɵɵFactoryTarget.Directive }); }
+    static { this.ɵdir = i0.ɵɵngDeclareDirective({ minVersion: "14.0.0", version: "16.2.12", type: TuiValidator, isStandalone: true, selector: "[tuiValidator]", inputs: { tuiValidator: "tuiValidator" }, providers: [tuiProvide(NG_VALIDATORS, TuiValidator, true)], usesOnChanges: true, ngImport: i0 }); }
+}
+i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "16.2.12", ngImport: i0, type: TuiValidator, decorators: [{
+            type: Directive,
+            args: [{
+                    standalone: true,
+                    selector: '[tuiValidator]',
+                    providers: [tuiProvide(NG_VALIDATORS, TuiValidator, true)],
+                }]
+        }], propDecorators: { tuiValidator: [{
+                type: Input
+            }] } });
+
+/**
+ * Generated bundle index. Do not edit.
+ */
+
+export { TuiValidator };
+//# sourceMappingURL=taiga-ui-cdk-directives-validator.mjs.map

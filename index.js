@@ -7,16 +7,12 @@ const {setActiveProject, createProject, createSourceFile, saveActiveProject, res
 const app = express();
 const PORT = 4000;
 
-const collectionPath = resolve(require.resolve('@taiga-ui/cdk/package.json'), '../schematics/migration.json');
+const collectionPath = resolve(__dirname, '@taiga-ui/cdk/schematics/migration.json');
 
 app.use( bodyParser.json() );       // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
     extended: true
 }));
-
-
-
-
 
 app.post('/template', async (req, res) => {
 

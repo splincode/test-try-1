@@ -1,0 +1,16 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.MODULES_TO_REPLACE_WITH_PROVIDERS = void 0;
+exports.MODULES_TO_REPLACE_WITH_PROVIDERS = [
+    {
+        from: {
+            name: 'TuiMobileCalendarDialogModule',
+            moduleSpecifier: '@taiga-ui/addon-mobile',
+        },
+        to: {
+            name: 'tuiProvideMobileCalendar',
+            providerSpecifier: '@taiga-ui/addon-mobile',
+            isFunction: true,
+        },
+    },
+];

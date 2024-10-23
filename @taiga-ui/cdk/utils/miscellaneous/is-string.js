@@ -1,0 +1,7 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.tuiIsString = void 0;
+function tuiIsString(value) {
+    return typeof value === 'string';
+}
+exports.tuiIsString = tuiIsString;

@@ -1,0 +1,7 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.normalizeAttrValue = void 0;
+function normalizeAttrValue(attrName, attrValue) {
+    return attrName.startsWith('[') ? attrValue : `'${attrValue}'`;
+}
+exports.normalizeAttrValue = normalizeAttrValue;

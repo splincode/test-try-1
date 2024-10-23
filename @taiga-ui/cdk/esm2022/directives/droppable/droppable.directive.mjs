@@ -1,0 +1,31 @@
+import { Directive, Output } from '@angular/core';
+import { tuiPreventDefault, tuiTypedFromEvent } from '@taiga-ui/cdk/observables';
+import { tuiInjectElement } from '@taiga-ui/cdk/utils';
+import { tuiIsPresent } from '@taiga-ui/cdk/utils/miscellaneous';
+import { distinctUntilChanged, filter, map, merge, startWith, switchMap } from 'rxjs';
+import * as i0 from "@angular/core";
+class TuiDroppable {
+    constructor() {
+        this.el = tuiInjectElement();
+        this.tuiDroppableDropped = tuiTypedFromEvent(this.el, 'drop').pipe(tuiPreventDefault(), map((event) => event.dataTransfer), filter(tuiIsPresent));
+        this.tuiDroppableDragOverChange = tuiTypedFromEvent(this.el, 'dragenter').pipe(switchMap(({ target, dataTransfer }) => merge(tuiTypedFromEvent(this.el, 'dragleave').pipe(filter((event) => event.target === target)), tuiTypedFromEvent(this.el, 'drop')).pipe(map(() => null), startWith(dataTransfer))), distinctUntilChanged((a, b) => (!!a && !!b) || (!a && !b)));
+    }
+    static { this.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "16.2.12", ngImport: i0, type: TuiDroppable, deps: [], target: i0.ɵɵFactoryTarget.Directive }); }
+    static { this.ɵdir = i0.ɵɵngDeclareDirective({ minVersion: "14.0.0", version: "16.2.12", type: TuiDroppable, isStandalone: true, selector: "[tuiDroppableDropped], [tuiDroppableDragOverChange]", outputs: { tuiDroppableDropped: "tuiDroppableDropped", tuiDroppableDragOverChange: "tuiDroppableDragOverChange" }, host: { listeners: { "dragover.prevent.silent": "0" } }, ngImport: i0 }); }
+}
+export { TuiDroppable };
+i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "16.2.12", ngImport: i0, type: TuiDroppable, decorators: [{
+            type: Directive,
+            args: [{
+                    standalone: true,
+                    selector: '[tuiDroppableDropped], [tuiDroppableDragOverChange]',
+                    host: {
+                        '(dragover.prevent.silent)': '0',
+                    },
+                }]
+        }], propDecorators: { tuiDroppableDropped: [{
+                type: Output
+            }], tuiDroppableDragOverChange: [{
+                type: Output
+            }] } });
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiZHJvcHBhYmxlLmRpcmVjdGl2ZS5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbIi4uLy4uLy4uLy4uLy4uL3Byb2plY3RzL2Nkay9kaXJlY3RpdmVzL2Ryb3BwYWJsZS9kcm9wcGFibGUuZGlyZWN0aXZlLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBLE9BQU8sRUFBQyxTQUFTLEVBQUUsTUFBTSxFQUFDLE1BQU0sZUFBZSxDQUFDO0FBQ2hELE9BQU8sRUFBQyxpQkFBaUIsRUFBRSxpQkFBaUIsRUFBQyxNQUFNLDJCQUEyQixDQUFDO0FBQy9FLE9BQU8sRUFBQyxnQkFBZ0IsRUFBQyxNQUFNLHFCQUFxQixDQUFDO0FBQ3JELE9BQU8sRUFBQyxZQUFZLEVBQUMsTUFBTSxtQ0FBbUMsQ0FBQztBQUMvRCxPQUFPLEVBQUMsb0JBQW9CLEVBQUUsTUFBTSxFQUFFLEdBQUcsRUFBRSxLQUFLLEVBQUUsU0FBUyxFQUFFLFNBQVMsRUFBQyxNQUFNLE1BQU0sQ0FBQzs7QUFFcEYsTUFPYSxZQUFZO0lBUHpCO1FBUXFCLE9BQUUsR0FBRyxnQkFBZ0IsRUFBRSxDQUFDO1FBR3pCLHdCQUFtQixHQUFHLGlCQUFpQixDQUFDLElBQUksQ0FBQyxFQUFFLEVBQUUsTUFBTSxDQUFDLENBQUMsSUFBSSxDQUN6RSxpQkFBaUIsRUFBRSxFQUNuQixHQUFHLENBQUMsQ0FBQyxLQUFLLEVBQUUsRUFBRSxDQUFDLEtBQUssQ0FBQyxZQUFZLENBQUMsRUFDbEMsTUFBTSxDQUFDLFlBQVksQ0FBQyxDQUN2QixDQUFDO1FBR2MsK0JBQTBCLEdBQUcsaUJBQWlCLENBQzFELElBQUksQ0FBQyxFQUFFLEVBQ1AsV0FBVyxDQUNkLENBQUMsSUFBSSxDQUNGLFNBQVMsQ0FBQyxDQUFDLEVBQUMsTUFBTSxFQUFFLFlBQVksRUFBQyxFQUFFLEVBQUUsQ0FDakMsS0FBSyxDQUNELGlCQUFpQixDQUFDLElBQUksQ0FBQyxFQUFFLEVBQUUsV0FBVyxDQUFDLENBQUMsSUFBSSxDQUN4QyxNQUFNLENBQUMsQ0FBQyxLQUFLLEVBQUUsRUFBRSxDQUFDLEtBQUssQ0FBQyxNQUFNLEtBQUssTUFBTSxDQUFDLENBQzdDLEVBQ0QsaUJBQWlCLENBQUMsSUFBSSxDQUFDLEVBQUUsRUFBRSxNQUFNLENBQUMsQ0FDckMsQ0FBQyxJQUFJLENBQ0YsR0FBRyxDQUFDLEdBQUcsRUFBRSxDQUFDLElBQUksQ0FBQyxFQUNmLFNBQVMsQ0FBQyxZQUFZLENBQUMsQ0FDMUIsQ0FDSixFQUNELG9CQUFvQixDQUFDLENBQUMsQ0FBQyxFQUFFLENBQUMsRUFBRSxFQUFFLENBQUMsQ0FBQyxDQUFDLENBQUMsQ0FBQyxJQUFJLENBQUMsQ0FBQyxDQUFDLENBQUMsSUFBSSxDQUFDLENBQUMsQ0FBQyxJQUFJLENBQUMsQ0FBQyxDQUFDLENBQUMsQ0FDN0QsQ0FBQztLQUNMOytHQTVCWSxZQUFZO21HQUFaLFlBQVk7O1NBQVosWUFBWTs0RkFBWixZQUFZO2tCQVB4QixTQUFTO21CQUFDO29CQUNQLFVBQVUsRUFBRSxJQUFJO29CQUNoQixRQUFRLEVBQUUscURBQXFEO29CQUMvRCxJQUFJLEVBQUU7d0JBQ0YsMkJBQTJCLEVBQUUsR0FBRztxQkFDbkM7aUJBQ0o7OEJBS21CLG1CQUFtQjtzQkFEbEMsTUFBTTtnQkFRUywwQkFBMEI7c0JBRHpDLE1BQU0iLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQge0RpcmVjdGl2ZSwgT3V0cHV0fSBmcm9tICdAYW5ndWxhci9jb3JlJztcbmltcG9ydCB7dHVpUHJldmVudERlZmF1bHQsIHR1aVR5cGVkRnJvbUV2ZW50fSBmcm9tICdAdGFpZ2EtdWkvY2RrL29ic2VydmFibGVzJztcbmltcG9ydCB7dHVpSW5qZWN0RWxlbWVudH0gZnJvbSAnQHRhaWdhLXVpL2Nkay91dGlscyc7XG5pbXBvcnQge3R1aUlzUHJlc2VudH0gZnJvbSAnQHRhaWdhLXVpL2Nkay91dGlscy9taXNjZWxsYW5lb3VzJztcbmltcG9ydCB7ZGlzdGluY3RVbnRpbENoYW5nZWQsIGZpbHRlciwgbWFwLCBtZXJnZSwgc3RhcnRXaXRoLCBzd2l0Y2hNYXB9IGZyb20gJ3J4anMnO1xuXG5ARGlyZWN0aXZlKHtcbiAgICBzdGFuZGFsb25lOiB0cnVlLFxuICAgIHNlbGVjdG9yOiAnW3R1aURyb3BwYWJsZURyb3BwZWRdLCBbdHVpRHJvcHBhYmxlRHJhZ092ZXJDaGFuZ2VdJyxcbiAgICBob3N0OiB7XG4gICAgICAgICcoZHJhZ292ZXIucHJldmVudC5zaWxlbnQpJzogJzAnLFxuICAgIH0sXG59KVxuZXhwb3J0IGNsYXNzIFR1aURyb3BwYWJsZSB7XG4gICAgcHJpdmF0ZSByZWFkb25seSBlbCA9IHR1aUluamVjdEVsZW1lbnQoKTtcblxuICAgIEBPdXRwdXQoKVxuICAgIHB1YmxpYyByZWFkb25seSB0dWlEcm9wcGFibGVEcm9wcGVkID0gdHVpVHlwZWRGcm9tRXZlbnQodGhpcy5lbCwgJ2Ryb3AnKS5waXBlKFxuICAgICAgICB0dWlQcmV2ZW50RGVmYXVsdCgpLFxuICAgICAgICBtYXAoKGV2ZW50KSA9PiBldmVudC5kYXRhVHJhbnNmZXIpLFxuICAgICAgICBmaWx0ZXIodHVpSXNQcmVzZW50KSxcbiAgICApO1xuXG4gICAgQE91dHB1dCgpXG4gICAgcHVibGljIHJlYWRvbmx5IHR1aURyb3BwYWJsZURyYWdPdmVyQ2hhbmdlID0gdHVpVHlwZWRGcm9tRXZlbnQoXG4gICAgICAgIHRoaXMuZWwsXG4gICAgICAgICdkcmFnZW50ZXInLFxuICAgICkucGlwZShcbiAgICAgICAgc3dpdGNoTWFwKCh7dGFyZ2V0LCBkYXRhVHJhbnNmZXJ9KSA9PlxuICAgICAgICAgICAgbWVyZ2UoXG4gICAgICAgICAgICAgICAgdHVpVHlwZWRGcm9tRXZlbnQodGhpcy5lbCwgJ2RyYWdsZWF2ZScpLnBpcGUoXG4gICAgICAgICAgICAgICAgICAgIGZpbHRlcigoZXZlbnQpID0+IGV2ZW50LnRhcmdldCA9PT0gdGFyZ2V0KSxcbiAgICAgICAgICAgICAgICApLFxuICAgICAgICAgICAgICAgIHR1aVR5cGVkRnJvbUV2ZW50KHRoaXMuZWwsICdkcm9wJyksXG4gICAgICAgICAgICApLnBpcGUoXG4gICAgICAgICAgICAgICAgbWFwKCgpID0+IG51bGwpLFxuICAgICAgICAgICAgICAgIHN0YXJ0V2l0aChkYXRhVHJhbnNmZXIpLFxuICAgICAgICAgICAgKSxcbiAgICAgICAgKSxcbiAgICAgICAgZGlzdGluY3RVbnRpbENoYW5nZWQoKGEsIGIpID0+ICghIWEgJiYgISFiKSB8fCAoIWEgJiYgIWIpKSxcbiAgICApO1xufVxuIl19
