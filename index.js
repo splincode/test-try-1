@@ -18,7 +18,7 @@ app.post('/template', async (req, res) => {
 
     console.log(
         await run(
-            'ls -la'
+            'ls -la @taiga-ui/cdk'
         )
     );
 
@@ -80,13 +80,7 @@ app.post('/template', async (req, res) => {
        console.log('body is ',req.body);
 
        res.send({
-           result: result,
-           ls: await run(
-               'ls -la'
-           ),
-           lsNode: await run(
-               'ls -la node_modules/@taiga-ui/cdk'
-           )
+           result: result
        });
 
        resetActiveProject();
@@ -97,7 +91,7 @@ app.post('/template', async (req, res) => {
                'ls -la'
            ),
            lsNode: await run(
-           'ls -la node_modules/@taiga-ui/cdk'
+           'ls -la @taiga-ui/cdk'
             )
        });
    }
