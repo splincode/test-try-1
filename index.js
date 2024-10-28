@@ -1,25 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser')
 const { resolve } = require('path');
-const fs = require('fs')
-const path = require('path')
-
-const readdirSync = (p, a = []) => {
-    if (fs.statSync(p).isDirectory())
-        fs.readdirSync(p).map(f => readdirSync(a[a.push(path.join(p, f)) - 1], a))
-    return a
-}
-
-if (process.env.VERCEL) {
-    // We are using Vercel, so we have to trigger a read of the static files
-    // needed by MockPass so that Vercel knows that we keep them at runtime
-
-    readdirSync(__dirname);
-}
-
-const {UnitTestTree, SchematicTestRunner} = require("@angular-devkit/schematics/testing");
-const {HostTree} = require("@angular-devkit/schematics");
-const {setActiveProject, createProject, createSourceFile, saveActiveProject, resetActiveProject} = require("ng-morph");
 const app = express();
 const PORT = 4000;
 
@@ -32,6 +13,10 @@ app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
 
 app.post('/template', async (req, res) => {
     try {
+        const {HostTree} = require("@angular-devkit/schematics");
+        const {UnitTestTree, SchematicTestRunner} = require("@angular-devkit/schematics/testing");
+        const {setActiveProject, createProject, createSourceFile, saveActiveProject, resetActiveProject} = require("ng-morph");
+
         const body = req.body;
 
         let host = new UnitTestTree(new HostTree());
